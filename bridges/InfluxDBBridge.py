@@ -13,7 +13,15 @@ class InfluxDBBridge(BaseBridge):
         super(InfluxDBBridge, self).__init__()
         self.values = {}  # type: Dict[str, WrittenData]
         # noinspection SqlDialectInspection
-        resp = requests.post(config.INFLUXDB['base_url'] + '/query', data={'q': 'CREATE DATABASE "' + config.INFLUXDB['database'] + '"'})
+        resp = requests.post(
+            config.INFLUXDB['base_url'] + '/query',
+            data={
+                'q': 'CREATE DATABASE "' + config.INFLUXDB['database'] + '"',
+                'u': config.INFLUXDB['username'],
+                'p': config.INFLUXDB['password']
+            },
+            auth=(config.INFLUXDB['username'], config.INFLUXDB['password'])
+        )
         if resp.status_code != 200:
             raise Exception('Cannot connect to influxdb: ' + config.INFLUXDB['base_url'] + ' -> ' + str(resp.status_code))
 
@@ -34,8 +42,16 @@ class InfluxDBBridge(BaseBridge):
             data = data + " value=" + str(value)
         else:
             data = data + " str=\"" + str(value) + "\""
-            print data
-        requests.post(config.INFLUXDB['base_url'] + '/write?db=' + config.INFLUXDB['database'], data=data.encode('ISO-8859-1'))
+            print(data)
+
+        print(data)
+        resp = requests.post(
+            config.INFLUXDB['base_url'] + '/write?db=' + config.INFLUXDB['database'],
+            auth=(config.INFLUXDB['username'], config.INFLUXDB['password']),
+            data=data.encode('ISO-8859-1')
+        )
+        if resp.status_code != 204:
+            print(resp)
 
 
 class WrittenData(object):

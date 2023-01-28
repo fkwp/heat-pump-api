@@ -38,7 +38,9 @@ class ElsterBinding(BaseBinding):
             # TODO
             # ISTTEMPERATUR HK 2 - Heizkreis-Isttemperatur Heizkreis 2
             # SOLLTEMPERATUR HK 2 - Heizkreis-Solltemperatur Heizkreis 2 (HK2) bei Festwertregelung wird Festwerttemperatur angezeigt.
+
             # VORLAUFISTTEMPERATUR WP - Wärmepumpen-Vorlauf-Isttemperatur
+	    #SimpleEntry('heatpump/heating/flow_temperature', '°C', 0x000f, DEC),
 
             # VORLAUFISTTEMPERATUR NHZ - Nachheizstufen-Vorlauf-Isttemperatur
             SimpleEntry('booster/flow_temperature', '°C', 0x06a0, DEC),
@@ -153,7 +155,7 @@ class ElsterBinding(BaseBinding):
 
         ],
         # Verdichter ???
-        514: [
+        0x514: [
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # INFO / ANLAGE / WÄRMEMENGE
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -235,7 +237,7 @@ class ElsterBinding(BaseBinding):
         self.base_topic = 'heatpump/' + heat_pump_id + '/'
         self.ids_per_receiver = {}  # type: Dict[int, Set[int]]
 
-        for receiver, entries in self.ENTRIES.items():
+        for receiver, entries in list(self.ENTRIES.items()):
             elster_ids = set()  # type: Set[int]
             self.ids_per_receiver[receiver] = elster_ids
             for entry in entries:
@@ -252,19 +254,19 @@ class ElsterBinding(BaseBinding):
 
     def onApiMessage(self, topic, payload):
         # type: (str, object) -> None
-        print "API message ", topic, ": ", payload
+        print("API message ", topic, ": ", payload)
         if not str.startswith(topic, self.base_topic):
             return
         topic = str.replace(topic, self.base_topic, '')
 
-        for receiver, entries in self.ENTRIES.items():
+        for receiver, entries in list(self.ENTRIES.items()):
             for entry in entries:  # type: BaseEntry
                 if entry.isUpdatableByTopic(topic):
                     can_value = entry.convertApiValueToCan(payload)
                     if isinstance(can_value, int):
                         frame = ElsterFrame(sender=ElsterBinding.SENDER, receiver=receiver, elster_index=entry.getElsterIndices()[0],
                                             message_type=ElsterFrame.WRITE, value=can_value)
-                        print frame
+                        print(frame)
                         self.bus.send(frame.getCanMessage())
 
     def onCanMessage(self, msg):
@@ -279,19 +281,22 @@ class ElsterBinding(BaseBinding):
             can_value = entry.parseCanValue(frame.elster_index, frame.value)
             if can_value is not None:
                 topic = self.base_topic + entry.publishing_topic
-                print topic, can_value, entry.unit
+                print(topic, can_value, entry.unit)
                 for bridge in self.bridges:
-                    bridge.publishApiMessage(self.heat_pump_id, self.base_topic, entry.publishing_topic, can_value)
+                    try:
+                        bridge.publishApiMessage(self.heat_pump_id, self.base_topic, entry.publishing_topic, can_value)
+                    except BaseException as err:
+                        print(f"Unexpected {err=}, {type(err)=}")
 
     def resetValues(self):
-        for entries in self.ENTRIES.values():  # type: List[BaseEntry]
+        for entries in list(self.ENTRIES.values()):  # type: List[BaseEntry]
             for entry in entries:
                 entry.resetValues()
 
     def queryForData(self):
         self.resetValues()
 
-        for (receiver, entries) in self.ids_per_receiver.items():
+        for (receiver, entries) in list(self.ids_per_receiver.items()):
             for entry in entries:
                 # send a read request, the corresponding device will answer with the value
                 frame = ElsterFrame(sender=ElsterBinding.SENDER, receiver=receiver, elster_index=entry, message_type=ElsterFrame.READ)

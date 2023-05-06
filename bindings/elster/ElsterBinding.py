@@ -162,11 +162,12 @@ class ElsterBinding(BaseBinding):
             # VD HEIZEN TAG - Wärmemenge des Verdichters im Heizbetrieb seit 0:00 Uhr des aktuellen Tages.
             ReadOnlyFormulaEntry('compressor/heating/heat_output/day', 'Wh', 'A * 1000 + B', {'A': 0x092f, 'B': 0x092e}),
             # VD HEIZEN SUMME - Gesamtsumme der Wärmemenge des Verdichters im Heizbetrieb.
-            ReadOnlyFormulaEntry('compressor/heating/heat_output', 'Wh', 'A * 1000000 + (B+C) * 1000', {'A': 0x0931, 'B': 0x0930, 'C': 0x092f}),
+            ReadOnlyFormulaEntry('compressor/heating/heat_output', 'Wh', 'A * 1000000 + (B+C) * 1000 + D', {'A': 0x0931, 'B': 0x0930, 'C': 0x092f, 'D': 0x092e}),
             # VD WARMWASSER TAG - Wärmemenge des Verdichters im Warmwasserbetrieb seit 0:00 Uhr des aktuellen Tages.
             ReadOnlyFormulaEntry('compressor/hotwater/heat_output/day', 'Wh', 'A * 1000 + B', {'A': 0x092b, 'B': 0x092a}),
             # VD WARMWASSER SUMME - Gesamtsumme der Wärmemenge des Verdichters im Warmwasserbetrieb.
-            ReadOnlyFormulaEntry('compressor/hotwater/heat_output', 'Wh', 'A * 1000000 + (B+C) * 1000', {'A': 0x092d, 'B': 0x092c, 'C': 0x092b}),
+            ReadOnlyFormulaEntry('compressor/hotwater/heat_output', 'Wh', 'A * 1000000 + (B+C) * 1000 + D', {'A': 0x092d, 'B': 0x092c, 'C': 0x092b, 'D': 0x092a}),
+
             # NHZ HEIZEN SUMME - Gesamtsumme der Wärmemenge der Nachheizstufen im Heizbetrieb.
             ReadOnlyFormulaEntry('booster/heating/heat_output', 'Wh', 'A * 1000000 + B * 1000 + C', {'A': 0x0929, 'B': 0x0927, 'C': 0x0926}),
             # NHZ WARMWASSER SUMME - Gesamtsumme der Wärmemenge der Nachheizstufen im Warmwasserbetrieb.
@@ -178,11 +179,11 @@ class ElsterBinding(BaseBinding):
             # VD HEIZEN TAG - Elektrische Leistung des Verdichters im Heizbetrieb seit 0:00 Uhr des aktuellen Tages.
             ReadOnlyFormulaEntry('compressor/heating/energy_input/day', 'Wh', 'A * 1000 + B', {'A': 0x091f, 'B': 0x091e}),
             # VD HEIZEN SUMME - Gesamtsumme der Elektrischen Leistung des Verdichters im Heizbetrieb.
-            ReadOnlyFormulaEntry('compressor/heating/energy_input', 'Wh', 'A * 1000000 + (B+C) * 1000', {'A': 0x0921, 'B': 0x0920, 'C': 0x091f}),
+            ReadOnlyFormulaEntry('compressor/heating/energy_input', 'Wh', 'A * 1000000 + (B+C) * 1000 + D', {'A': 0x0921, 'B': 0x0920, 'C': 0x091f, 'D': 0x091e}),
             # VD WARMWASSER TAG - Elektrische Leistung des Verdichters im Warmwasserbetrieb seit 0:00 Uhr des aktuellen Tages.
             ReadOnlyFormulaEntry('compressor/hotwater/energy_input/day', 'Wh', 'A * 1000 + B', {'A': 0x091b, 'B': 0x091a}),
             # VD WARMWASSER SUMME - Gesamtsumme der Elektrischen Leistung des Verdichters im Warmwasserbetrieb.
-            ReadOnlyFormulaEntry('compressor/hotwater/energy_input', 'Wh', 'A * 1000000 + (B+C) * 1000', {'A': 0x091d, 'B': 0x091c, 'C': 0x091b}),
+            ReadOnlyFormulaEntry('compressor/hotwater/energy_input', 'Wh', 'A * 1000000 + (B+C) * 1000 + D', {'A': 0x091d, 'B': 0x091c, 'C': 0x091b, 'D': 0x091a}),
 
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # INFO / ANLAGE / LAUFZEITEN

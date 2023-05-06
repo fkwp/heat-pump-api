@@ -11,6 +11,7 @@ class MqttBridge(BaseBridge):
         self.client = MqttClient()
         self.client.on_message = self.onMqttMessage
         self.client.on_connect = self.onConnect
+        self.client.username_pw_set(config.MQTT['username'], config.MQTT['password'])
 
     def publishApiMessage(self, heat_pump_id, base_topic, topic, value):
         self.client.publish(base_topic + topic, value)
